@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Briefcase, Building2, CalendarClock, MapPin } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { DemoNotice } from "@/components/DemoNotice";
 import { PageHeader } from "@/components/PageHeader";
@@ -79,7 +80,7 @@ function Oportunidades() {
                 <dd className="font-semibold">{formatarData(o.prazo)}</dd>
               </div>
             </dl>
-            <Button variant="cta" className="mt-5 w-full sm:w-auto sm:self-start" disabled title="Disponível após a integração">
+            <Button variant="cta" className="mt-5 w-full sm:w-auto sm:self-start" onClick={() => toast.info("As inscrições ficarão disponíveis quando a plataforma for conectada.")}>
               Quero participar
             </Button>
           </li>

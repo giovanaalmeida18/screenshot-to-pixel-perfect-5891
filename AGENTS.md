@@ -28,3 +28,11 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+
+- All reads go through `queryOptions` in `src/lib/data/queries.ts` (loader `ensureQueryData` + `useSuspenseQuery`); today they resolve demo data from `src/lib/data/demo.ts`, so backend integration only swaps those function bodies.
+- Demo data must be visibly labelled as example content ("exemplo") and never look like real alumni records.
+- Logged-in screens live under the pathless `_portal` layout (header, sidebar, mobile bottom nav); public screens use `PublicShell`/`AuthShell`.
+- Accessibility preferences (font scale, high contrast) are applied via `data-font` / `.hc` on `<html>` from `src/lib/accessibility.tsx`; new colors must be tokens so high-contrast overrides keep working.
+- Login/signup are demo-only (`src/lib/demo-session.ts`) until real authentication is added.

@@ -2,6 +2,7 @@ import { useSuspenseQueries } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { BookOpen, FileText, MousePointerClick, PlayCircle, Search } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { DemoNotice } from "@/components/DemoNotice";
 import { PageHeader } from "@/components/PageHeader";
@@ -121,7 +122,7 @@ function Biblioteca() {
               <p className="mt-2 text-sm text-muted-foreground">
                 {m.duracao ?? (m.paginas ? `${m.paginas} páginas` : "Passo a passo ilustrado")}
               </p>
-              <Button variant="outline" className="mt-4 w-full" disabled title="Disponível após a integração">
+              <Button variant="outline" className="mt-4 w-full" onClick={() => toast.info("Os materiais ficarão disponíveis quando a plataforma for conectada.")}>
                 {t.acao}
               </Button>
             </li>
