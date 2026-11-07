@@ -18,11 +18,6 @@ export function ComunicadoCard({ item, className }: { item: Comunicado; classNam
         <span className={cn("rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide", tag.className)}>
           {tag.label}
         </span>
-        {item.destaque && (
-          <span className="rounded-full bg-brand-yellow px-3 py-1 text-xs font-bold uppercase tracking-wide text-ink">
-            Destaque
-          </span>
-        )}
       </div>
       <h3 className="mt-4 text-lg font-bold text-foreground">{item.titulo}</h3>
       <p className="mt-2 flex-1 text-base text-muted-foreground">{item.resumo}</p>

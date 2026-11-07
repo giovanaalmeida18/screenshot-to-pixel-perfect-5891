@@ -1,16 +1,14 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { UserPlus } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { MailCheck, UserPlus } from "lucide-react";
 import { useState, type FormEvent } from "react";
-import { toast } from "sonner";
 
-import { DemoNotice } from "@/components/DemoNotice";
 import { FormField } from "@/components/FormField";
 import { AuthShell } from "@/components/layout/PublicShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cursosDoProjeto } from "@/lib/data/demo";
-import { salvarSessaoDemo } from "@/lib/demo-session";
+import { supabase } from "@/integrations/supabase/client";
+import { cursosDoProjeto } from "@/lib/data/constants";
 import {
   SENHA_MINIMA,
   formatarTelefone,
@@ -36,9 +34,11 @@ export const Route = createFileRoute("/cadastro")({
 const vazio: CadastroInput = { nome: "", email: "", telefone: "", curso: "", senha: "", confirmarSenha: "" };
 
 function Cadastro() {
-  const navigate = useNavigate();
   const [form, setForm] = useState<CadastroInput>(vazio);
   const [erros, setErros] = useState<CadastroErros>({});
+  const [erroGeral, setErroGeral] = useState<string>();
+  const [enviando, setEnviando] = useState(false);
+  const [concluido, setConcluido] = useState(false);
 
   const set = (campo: keyof CadastroInput) => (valor: string) => setForm((f) => ({ ...f, [campo]: valor }));
   const aria = (campo: keyof CadastroInput) => ({
@@ -46,8 +46,9 @@ function Cadastro() {
     "aria-describedby": erros[campo] ? `${campo}-erro` : undefined,
   });
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setErroGeral(undefined);
     const novos = validarCadastro(form);
     setErros(novos);
     const primeiroErro = Object.keys(novos)[0];
@@ -55,14 +56,63 @@ function Cadastro() {
       document.getElementById(primeiroErro)?.focus();
       return;
     }
-    salvarSessaoDemo(form.nome);
-    toast.success("Conta criada (demonstração). Boas-vindas!");
-    navigate({ to: "/painel" });
+    setEnviando(true);
+    const { error } = await supabase.auth.signUp({
+      email: form.email.trim(),
+      password: form.senha,
+      options: {
+        emailRedirectTo: window.location.origin,
+        data: {
+          full_name: form.nome.trim(),
+          phone: form.telefone,
+          course_taken: form.curso,
+        },
+      },
+    });
+    setEnviando(false);
+    if (error) {
+      const msg = error.message.toLowerCase();
+      setErroGeral(
+        msg.includes("already")
+          ? "Este e-mail já tem uma conta. Tente entrar ou recuperar a senha."
+          : msg.includes("weak") || msg.includes("password")
+            ? "Essa senha é muito comum ou já vazou na internet. Escolha uma senha mais forte, com letras, números e símbolos."
+            : "Não foi possível criar sua conta agora. Tente novamente em instantes.",
+      );
+      return;
+    }
+    setConcluido(true);
   };
+
+  if (concluido) {
+    return (
+      <AuthShell title="Quase lá!" subtitle="Sua conta foi criada com sucesso.">
+        <div role="status" className="rounded-2xl bg-surface-teal p-5 text-ink">
+          <MailCheck className="h-8 w-8" aria-hidden="true" />
+          <p className="mt-3 text-lg font-semibold">Confirme seu e-mail</p>
+          <p className="mt-1 text-base">
+            Enviamos um link de confirmação para <strong>{form.email}</strong>. Abra o e-mail e clique no link para
+            ativar sua conta. Depois, é só entrar no Inclus Conecta.
+          </p>
+        </div>
+        <p className="mt-6 text-center text-base text-muted-foreground">
+          Já confirmou?{" "}
+          <Link to="/entrar" className="font-semibold text-primary underline-offset-4 hover:underline">
+            Entrar
+          </Link>
+        </p>
+      </AuthShell>
+    );
+  }
 
   return (
     <AuthShell title="Crie sua conta" subtitle="Preencha seus dados. Leva menos de 2 minutos.">
       <form onSubmit={onSubmit} noValidate className="space-y-5">
+        {erroGeral && (
+          <p role="alert" className="rounded-2xl border-2 border-destructive bg-destructive/10 p-4 text-base font-medium text-destructive">
+            {erroGeral}
+          </p>
+        )}
         <FormField id="nome" label="Nome completo" error={erros.nome}>
           <Input id="nome" autoComplete="name" value={form.nome} onChange={(e) => set("nome")(e.target.value)} {...aria("nome")} />
         </FormField>
@@ -124,8 +174,8 @@ function Cadastro() {
             {...aria("confirmarSenha")}
           />
         </FormField>
-        <Button type="submit" size="lg" variant="cta" className="w-full">
-          <UserPlus aria-hidden="true" /> Criar minha conta
+        <Button type="submit" size="lg" variant="cta" className="w-full" disabled={enviando}>
+          <UserPlus aria-hidden="true" /> {enviando ? "Criando conta…" : "Criar minha conta"}
         </Button>
       </form>
       <p className="mt-6 text-center text-base text-muted-foreground">
@@ -134,7 +184,6 @@ function Cadastro() {
           Entrar
         </Link>
       </p>
-      <DemoNotice className="mt-6">Versão de demonstração: os dados digitados não são salvos.</DemoNotice>
     </AuthShell>
   );
 }

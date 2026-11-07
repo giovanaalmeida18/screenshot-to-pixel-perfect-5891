@@ -1,10 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Briefcase, Building2, CalendarClock, MapPin } from "lucide-react";
+import { Briefcase, CalendarClock, ExternalLink } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
 
-import { DemoNotice } from "@/components/DemoNotice";
 import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { oportunidadesQuery } from "@/lib/data/queries";
@@ -23,6 +21,7 @@ const tipos: Record<OportunidadeTipo, { label: string; className: string }> = {
   curso: { label: "Curso", className: "bg-primary text-primary-foreground" },
   capacitacao: { label: "Capacitação", className: "bg-brand-teal text-ink" },
   evento: { label: "Evento", className: "bg-brand-yellow text-ink" },
+  oficina: { label: "Oficina", className: "bg-surface-teal text-ink" },
   vaga: { label: "Vaga", className: "bg-brand-orange text-ink" },
 };
 
@@ -40,7 +39,7 @@ function Oportunidades() {
         tone="teal"
       />
       <div role="group" aria-label="Filtrar oportunidades" className="mb-6 flex flex-wrap gap-2">
-        {(["todos", "curso", "capacitacao", "evento", "vaga"] as const).map((t) => (
+        {(["todos", "curso", "capacitacao", "evento", "oficina", "vaga"] as const).map((t) => (
           <button
             key={t}
             type="button"
@@ -55,38 +54,40 @@ function Oportunidades() {
           </button>
         ))}
       </div>
-      <ul className="grid gap-4 md:grid-cols-2">
-        {lista.map((o) => (
-          <li key={o.id} className="flex flex-col rounded-3xl border bg-card p-5 shadow-soft sm:p-6">
-            <span className={cn("self-start rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide", tipos[o.tipo].className)}>
-              {tipos[o.tipo].label}
-            </span>
-            <h3 className="mt-4 text-lg font-bold text-foreground">{o.titulo}</h3>
-            <p className="mt-2 flex-1 text-base text-muted-foreground">{o.descricao}</p>
-            <dl className="mt-4 grid gap-2 text-sm text-foreground">
-              <div className="flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-primary" aria-hidden="true" />
-                <dt className="sr-only">Instituição</dt>
-                <dd>{o.instituicao}</dd>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
-                <dt className="sr-only">Modalidade</dt>
-                <dd className="capitalize">{o.modalidade}</dd>
-              </div>
-              <div className="flex items-center gap-2">
-                <CalendarClock className="h-4 w-4 text-primary" aria-hidden="true" />
-                <dt>Inscrições até</dt>
-                <dd className="font-semibold">{formatarData(o.prazo)}</dd>
-              </div>
-            </dl>
-            <Button variant="cta" className="mt-5 w-full sm:w-auto sm:self-start" onClick={() => toast.info("As inscrições ficarão disponíveis quando a plataforma for conectada.")}>
-              Quero participar
-            </Button>
-          </li>
-        ))}
-      </ul>
-      <DemoNotice className="mt-6" />
+      {lista.length > 0 ? (
+        <ul className="grid gap-4 md:grid-cols-2">
+          {lista.map((o) => (
+            <li key={o.id} className="flex flex-col rounded-3xl border bg-card p-5 shadow-soft sm:p-6">
+              <span className={cn("self-start rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide", (tipos[o.tipo] ?? tipos.curso).className)}>
+                {(tipos[o.tipo] ?? tipos.curso).label}
+              </span>
+              <h3 className="mt-4 text-lg font-bold text-foreground">{o.titulo}</h3>
+              {o.descricao && <p className="mt-2 flex-1 text-base text-muted-foreground">{o.descricao}</p>}
+              {o.prazo && (
+                <p className="mt-4 flex items-center gap-2 text-sm text-foreground">
+                  <CalendarClock className="h-4 w-4 text-primary" aria-hidden="true" />
+                  Inscrições até <span className="font-semibold">{formatarData(o.prazo)}</span>
+                </p>
+              )}
+              {o.linkExterno && (
+                <Button asChild variant="cta" className="mt-5 w-full sm:w-auto sm:self-start">
+                  <a href={o.linkExterno} target="_blank" rel="noopener noreferrer">
+                    Quero participar <ExternalLink aria-hidden="true" />
+                  </a>
+                </Button>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="flex flex-col items-center rounded-3xl border-2 border-dashed bg-card p-10 text-center">
+          <Briefcase className="h-10 w-10 text-primary" aria-hidden="true" />
+          <p className="mt-3 text-lg font-bold text-foreground">Nenhuma oportunidade no momento</p>
+          <p className="mt-1 max-w-md text-base text-muted-foreground">
+            Quando a equipe divulgar cursos, eventos e vagas, eles aparecerão aqui.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

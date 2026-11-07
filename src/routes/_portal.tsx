@@ -1,4 +1,5 @@
-import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { LogOut, Menu } from "lucide-react";
 import { useState } from "react";
 
@@ -7,10 +8,17 @@ import { Logo } from "@/components/brand/Logo";
 import { adminNav, bottomNav, mainNav, type NavItem } from "@/components/layout/nav";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { encerrarSessaoDemo } from "@/lib/demo-session";
+import { getUsuarioAtual, sairDaConta } from "@/lib/auth";
+import { isAdminQuery } from "@/lib/data/queries";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_portal")({
+  // A sessão fica no navegador, então o portal é renderizado no cliente.
+  ssr: false,
+  beforeLoad: async () => {
+    const user = await getUsuarioAtual();
+    if (!user) throw redirect({ to: "/entrar" });
+  },
   component: PortalLayout,
 });
 
@@ -30,15 +38,19 @@ function SideLink({ item, onClick }: { item: NavItem; onClick?: (() => void) | u
   );
 }
 
-function NavList({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
+function NavList({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate?: (() => void) | undefined }) {
   return (
     <nav aria-label="Menu principal" className="flex flex-col gap-1">
       {mainNav.map((item) => (
         <SideLink key={item.to} item={item} onClick={onNavigate} />
       ))}
-      <div className="my-3 h-px bg-border" />
-      <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Equipe do projeto</p>
-      <SideLink item={adminNav} onClick={onNavigate} />
+      {isAdmin && (
+        <>
+          <div className="my-3 h-px bg-border" />
+          <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Equipe do projeto</p>
+          <SideLink item={adminNav} onClick={onNavigate} />
+        </>
+      )}
     </nav>
   );
 }
@@ -46,11 +58,15 @@ function NavList({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
 function PortalLayout() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { data: isAdmin } = useQuery(isAdminQuery);
 
-  const sair = () => {
-    encerrarSessaoDemo();
+  const sair = async () => {
     setOpen(false);
-    navigate({ to: "/" });
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await sairDaConta();
+    navigate({ to: "/entrar", replace: true });
   };
 
   return (
@@ -78,7 +94,7 @@ function PortalLayout() {
                     <Logo />
                   </SheetTitle>
                 </SheetHeader>
-                <NavList onNavigate={() => setOpen(false)} />
+                <NavList isAdmin={!!isAdmin} onNavigate={() => setOpen(false)} />
                 <div className="mt-auto space-y-4 border-t pt-4">
                   <p className="text-sm font-semibold text-foreground">Acessibilidade</p>
                   <AccessibilityBar compact />
@@ -94,7 +110,7 @@ function PortalLayout() {
 
       <div className="mx-auto flex max-w-7xl gap-8 px-4 sm:px-6">
         <aside className="sticky top-20 hidden h-[calc(100vh-6rem)] w-64 shrink-0 overflow-y-auto py-6 lg:block">
-          <NavList />
+          <NavList isAdmin={!!isAdmin} />
         </aside>
         <main id="conteudo" className="min-w-0 flex-1 pb-28 pt-6 lg:pb-12">
           <Outlet />
