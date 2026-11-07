@@ -18,10 +18,11 @@ import type {
   VinculoCurso,
 } from "./types";
 
-async function must<T>(promise: PromiseLike<{ data: T | null; error: { message: string } | null }>): Promise<T> {
+async function must<T>(promise: PromiseLike<{ data: T; error: { message: string } | null }>): Promise<NonNullable<T>> {
   const { data, error } = await promise;
   if (error) throw new Error(error.message);
-  return data as T;
+  if (data == null) throw new Error("Registro não encontrado.");
+  return data as NonNullable<T>;
 }
 
 export const sessionQuery = queryOptions({
