@@ -40,8 +40,12 @@ function Index() {
       <PublicHeader />
       <main id="conteudo">
         <section className="relative overflow-hidden bg-gradient-ocean text-primary-foreground">
-          <div aria-hidden="true" className="absolute -right-10 top-10 h-40 w-40 rounded-full bg-brand-yellow opacity-90 sm:h-64 sm:w-64" />
-          <div aria-hidden="true" className="absolute -bottom-12 left-[45%] h-28 w-28 rotate-12 rounded-3xl bg-brand-orange opacity-90" />
+          {/* Formas decorativas: no celular/tablet ficam atrás da foto para não cobrir o título */}
+          <div
+            aria-hidden="true"
+            className="absolute -right-16 bottom-24 h-44 w-44 rounded-full bg-brand-yellow opacity-90 sm:h-56 sm:w-56 md:bottom-auto md:-right-10 md:top-10 md:h-64 md:w-64"
+          />
+          <div aria-hidden="true" className="absolute -bottom-12 left-[45%] hidden h-28 w-28 rotate-12 rounded-3xl bg-brand-orange opacity-90 md:block" />
           <div aria-hidden="true" className="geo-dots absolute left-4 top-6 h-24 w-32 text-primary-foreground/30" />
 
           <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.1fr_1fr] md:py-20">
@@ -69,8 +73,8 @@ function Index() {
               </div>
             </div>
 
-            <div className="relative">
-              <div aria-hidden="true" className="absolute -left-4 -top-4 h-full w-full rounded-[2rem] bg-brand-teal" />
+            <div className="relative mx-auto w-full max-w-lg pl-4 pt-4 md:max-w-none">
+              <div aria-hidden="true" className="absolute left-0 top-0 h-[calc(100%-1rem)] w-[calc(100%-1rem)] rounded-[2rem] bg-brand-teal" />
               <img
                 src={heroImg}
                 width={1280}
