@@ -6,6 +6,7 @@ import { FormField } from "@/components/FormField";
 import { AuthShell } from "@/components/layout/PublicShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
 import { validarEmail } from "@/lib/validation";
 
 export const Route = createFileRoute("/recuperar-senha")({
@@ -25,13 +26,21 @@ export const Route = createFileRoute("/recuperar-senha")({
 function RecuperarSenha() {
   const [email, setEmail] = useState("");
   const [erro, setErro] = useState<string>();
+  const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(false);
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const err = validarEmail(email);
     setErro(err);
-    if (!err) setEnviado(true);
+    if (err) return;
+    setEnviando(true);
+    await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/redefinir-senha`,
+    });
+    setEnviando(false);
+    // Por segurança, mostramos a mesma mensagem mesmo se o e-mail não existir.
+    setEnviado(true);
   };
 
   return (
@@ -44,8 +53,8 @@ function RecuperarSenha() {
           <MailCheck className="h-8 w-8" aria-hidden="true" />
           <p className="mt-3 text-lg font-semibold">Pronto! Confira seu e-mail.</p>
           <p className="mt-1 text-base">
-            Nesta versão de demonstração nenhum e-mail é enviado. Quando a plataforma estiver conectada, o link
-            chegará em <strong>{email}</strong>.
+            Se <strong>{email}</strong> estiver cadastrado, você receberá um link para criar uma nova senha. Não
+            esqueça de olhar a caixa de spam.
           </p>
         </div>
       ) : (
@@ -63,8 +72,8 @@ function RecuperarSenha() {
               aria-describedby={erro ? "email-erro" : undefined}
             />
           </FormField>
-          <Button type="submit" size="lg" className="w-full">
-            Enviar link
+          <Button type="submit" size="lg" className="w-full" disabled={enviando}>
+            {enviando ? "Enviando…" : "Enviar link"}
           </Button>
         </form>
       )}

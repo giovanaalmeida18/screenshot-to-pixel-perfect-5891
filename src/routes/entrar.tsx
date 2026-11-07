@@ -2,12 +2,11 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
-import { DemoNotice } from "@/components/DemoNotice";
 import { FormField } from "@/components/FormField";
 import { AuthShell } from "@/components/layout/PublicShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { salvarSessaoDemo } from "@/lib/demo-session";
+import { supabase } from "@/integrations/supabase/client";
 import { validarEmail } from "@/lib/validation";
 
 export const Route = createFileRoute("/entrar")({
@@ -30,19 +29,37 @@ function Entrar() {
   const [senha, setSenha] = useState("");
   const [mostrar, setMostrar] = useState(false);
   const [erros, setErros] = useState<{ email?: string | undefined; senha?: string | undefined }>({});
+  const [erroGeral, setErroGeral] = useState<string>();
+  const [entrando, setEntrando] = useState(false);
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setErroGeral(undefined);
     const novos = { email: validarEmail(email), senha: senha ? undefined : "Digite sua senha." };
     setErros(novos);
     if (novos.email || novos.senha) return;
-    salvarSessaoDemo(email);
+    setEntrando(true);
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password: senha });
+    setEntrando(false);
+    if (error) {
+      setErroGeral(
+        error.message.toLowerCase().includes("email not confirmed")
+          ? "Sua conta ainda não foi confirmada. Abra o e-mail que enviamos e clique no link de confirmação."
+          : "E-mail ou senha incorretos. Confira os dados e tente novamente.",
+      );
+      return;
+    }
     navigate({ to: "/painel" });
   };
 
   return (
     <AuthShell title="Que bom ver você de novo!" subtitle="Entre com o e-mail e a senha da sua conta.">
       <form onSubmit={onSubmit} noValidate className="space-y-5">
+        {erroGeral && (
+          <p role="alert" className="rounded-2xl border-2 border-destructive bg-destructive/10 p-4 text-base font-medium text-destructive">
+            {erroGeral}
+          </p>
+        )}
         <FormField id="email" label="E-mail" error={erros.email}>
           <Input
             id="email"
@@ -83,8 +100,8 @@ function Entrar() {
             Esqueci minha senha
           </Link>
         </div>
-        <Button type="submit" size="lg" className="w-full">
-          <LogIn aria-hidden="true" /> Entrar
+        <Button type="submit" size="lg" className="w-full" disabled={entrando}>
+          <LogIn aria-hidden="true" /> {entrando ? "Entrando…" : "Entrar"}
         </Button>
       </form>
       <p className="mt-6 text-center text-base text-muted-foreground">
@@ -93,9 +110,6 @@ function Entrar() {
           Cadastre-se
         </Link>
       </p>
-      <DemoNotice className="mt-6">
-        Versão de demonstração: qualquer e-mail e senha levam ao painel. Nenhum dado é enviado.
-      </DemoNotice>
     </AuthShell>
   );
 }
