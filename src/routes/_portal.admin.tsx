@@ -78,10 +78,10 @@ function Admin() {
       <Tabs defaultValue="usuarios" className="mt-8">
         <TabsList className="h-auto w-full flex-wrap justify-start gap-1 rounded-2xl bg-card p-1.5 shadow-soft">
           {[
-            ["usuarios", "Usuários"],
-            ["cursos", "Cursos"],
-            ["materiais", "Materiais"],
-            ["comunicados", "Comunicados"],
+            ["usuarios", "Usuários"] as const,
+            ["cursos", "Cursos"] as const,
+            ["materiais", "Materiais"] as const,
+            ["comunicados", "Comunicados"] as const,
           ].map(([v, l]) => (
             <TabsTrigger
               key={v}

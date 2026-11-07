@@ -39,4 +39,5 @@ export const mainNav: NavItem[] = [
 
 export const adminNav: NavItem = { to: "/admin", label: "Administração", icon: Settings, tone: "blue" };
 
-export const bottomNav: NavItem[] = [mainNav[0], mainNav[1], mainNav[4], mainNav[5]];
+const bottomPaths: NavItem["to"][] = ["/painel", "/biblioteca", "/comunicados", "/oportunidades"];
+export const bottomNav: NavItem[] = mainNav.filter((i) => bottomPaths.includes(i.to));

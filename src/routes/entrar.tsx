@@ -29,7 +29,7 @@ function Entrar() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [mostrar, setMostrar] = useState(false);
-  const [erros, setErros] = useState<{ email?: string; senha?: string }>({});
+  const [erros, setErros] = useState<{ email?: string | undefined; senha?: string | undefined }>({});
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();

@@ -50,8 +50,9 @@ function Cadastro() {
     e.preventDefault();
     const novos = validarCadastro(form);
     setErros(novos);
-    if (Object.keys(novos).length) {
-      document.getElementById(Object.keys(novos)[0])?.focus();
+    const primeiroErro = Object.keys(novos)[0];
+    if (primeiroErro) {
+      document.getElementById(primeiroErro)?.focus();
       return;
     }
     salvarSessaoDemo(form.nome);

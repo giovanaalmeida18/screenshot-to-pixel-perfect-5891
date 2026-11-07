@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_portal")({
   component: PortalLayout,
 });
 
-function SideLink({ item, onClick }: { item: NavItem; onClick?: () => void }) {
+function SideLink({ item, onClick }: { item: NavItem; onClick?: (() => void) | undefined }) {
   const Icon = item.icon;
   return (
     <Link
@@ -30,7 +30,7 @@ function SideLink({ item, onClick }: { item: NavItem; onClick?: () => void }) {
   );
 }
 
-function NavList({ onNavigate }: { onNavigate?: () => void }) {
+function NavList({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
   return (
     <nav aria-label="Menu principal" className="flex flex-col gap-1">
       {mainNav.map((item) => (

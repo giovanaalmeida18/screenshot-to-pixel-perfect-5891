@@ -34,17 +34,17 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!loaded) return;
     const root = document.documentElement;
-    root.dataset.font = fontScale;
+    root.dataset["font"] = fontScale;
     root.classList.toggle("hc", highContrast);
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ fontScale, highContrast }));
   }, [fontScale, highContrast, loaded]);
 
   const increaseFont = useCallback(
-    () => setFontScale((s) => SCALES[Math.min(SCALES.indexOf(s) + 1, SCALES.length - 1)]),
+    () => setFontScale((s) => SCALES[Math.min(SCALES.indexOf(s) + 1, SCALES.length - 1)] ?? s),
     [],
   );
   const decreaseFont = useCallback(
-    () => setFontScale((s) => SCALES[Math.max(SCALES.indexOf(s) - 1, 0)]),
+    () => setFontScale((s) => SCALES[Math.max(SCALES.indexOf(s) - 1, 0)] ?? s),
     [],
   );
   const resetFont = useCallback(() => setFontScale("md"), []);
