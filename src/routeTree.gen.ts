@@ -14,6 +14,7 @@ import { Route as PortalRouteImport } from './routes/_portal'
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as RecuperarSenhaRouteImport } from './routes/recuperar-senha'
+import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
 import { Route as PortalAdminRouteImport } from './routes/_portal.admin'
 import { Route as PortalBibliotecaRouteImport } from './routes/_portal.biblioteca'
 import { Route as PortalCertificadosRouteImport } from './routes/_portal.certificados'
@@ -45,6 +46,11 @@ const EntrarRoute = EntrarRouteImport.update({
 const RecuperarSenhaRoute = RecuperarSenhaRouteImport.update({
   id: '/recuperar-senha',
   path: '/recuperar-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
+  id: '/redefinir-senha',
+  path: '/redefinir-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PortalAdminRoute = PortalAdminRouteImport.update({
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/cadastro': typeof CadastroRoute
   '/entrar': typeof EntrarRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
   '/admin': typeof PortalAdminRoute
   '/biblioteca': typeof PortalBibliotecaRoute
   '/certificados': typeof PortalCertificadosRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/cadastro': typeof CadastroRoute
   '/entrar': typeof EntrarRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
   '/admin': typeof PortalAdminRoute
   '/biblioteca': typeof PortalBibliotecaRoute
   '/certificados': typeof PortalCertificadosRoute
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/cadastro': typeof CadastroRoute
   '/entrar': typeof EntrarRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
   '/_portal/admin': typeof PortalAdminRoute
   '/_portal/biblioteca': typeof PortalBibliotecaRoute
   '/_portal/certificados': typeof PortalCertificadosRoute
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/entrar'
     | '/recuperar-senha'
+    | '/redefinir-senha'
     | '/admin'
     | '/biblioteca'
     | '/certificados'
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/entrar'
     | '/recuperar-senha'
+    | '/redefinir-senha'
     | '/admin'
     | '/biblioteca'
     | '/certificados'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/entrar'
     | '/recuperar-senha'
+    | '/redefinir-senha'
     | '/_portal/admin'
     | '/_portal/biblioteca'
     | '/_portal/certificados'
@@ -184,6 +196,7 @@ export interface RootRouteChildren {
   CadastroRoute: typeof CadastroRoute
   EntrarRoute: typeof EntrarRoute
   RecuperarSenhaRoute: typeof RecuperarSenhaRoute
+  RedefinirSenhaRoute: typeof RedefinirSenhaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/recuperar-senha'
       fullPath: '/recuperar-senha'
       preLoaderRoute: typeof RecuperarSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/redefinir-senha': {
+      id: '/redefinir-senha'
+      path: '/redefinir-senha'
+      fullPath: '/redefinir-senha'
+      preLoaderRoute: typeof RedefinirSenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_portal/admin': {
@@ -313,6 +333,7 @@ const rootRouteChildren: RootRouteChildren = {
   CadastroRoute: CadastroRoute,
   EntrarRoute: EntrarRoute,
   RecuperarSenhaRoute: RecuperarSenhaRoute,
+  RedefinirSenhaRoute: RedefinirSenhaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
