@@ -148,9 +148,6 @@
   --gradient-ocean: linear-gradient(135deg, var(--brand-blue), var(--brand-blue));
   --gradient-sunrise: linear-gradient(120deg, var(--brand-yellow), var(--brand-yellow));
 }
-.hc * {
-  border-width: revert-layer;
-}
 .hc a:not([data-slot]) {
   text-decoration: underline;
   text-underline-offset: 3px;
