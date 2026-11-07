@@ -10,33 +10,132 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PortalRouteImport } from './routes/_portal'
+import { Route as CadastroRouteImport } from './routes/cadastro'
+import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as RecuperarSenhaRouteImport } from './routes/recuperar-senha'
+import { Route as PortalBibliotecaRouteImport } from './routes/_portal.biblioteca'
+import { Route as PortalComunicadosRouteImport } from './routes/_portal.comunicados'
+import { Route as PortalOportunidadesRouteImport } from './routes/_portal.oportunidades'
+import { Route as PortalPainelRouteImport } from './routes/_portal.painel'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PortalRoute = PortalRouteImport.update({
+  id: '/_portal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroRoute = CadastroRouteImport.update({
+  id: '/cadastro',
+  path: '/cadastro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecuperarSenhaRoute = RecuperarSenhaRouteImport.update({
+  id: '/recuperar-senha',
+  path: '/recuperar-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalBibliotecaRoute = PortalBibliotecaRouteImport.update({
+  id: '/biblioteca',
+  path: '/biblioteca',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalComunicadosRoute = PortalComunicadosRouteImport.update({
+  id: '/comunicados',
+  path: '/comunicados',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalOportunidadesRoute = PortalOportunidadesRouteImport.update({
+  id: '/oportunidades',
+  path: '/oportunidades',
+  getParentRoute: () => PortalRoute,
+} as any)
+const PortalPainelRoute = PortalPainelRouteImport.update({
+  id: '/painel',
+  path: '/painel',
+  getParentRoute: () => PortalRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cadastro': typeof CadastroRoute
+  '/entrar': typeof EntrarRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
+  '/biblioteca': typeof PortalBibliotecaRoute
+  '/comunicados': typeof PortalComunicadosRoute
+  '/oportunidades': typeof PortalOportunidadesRoute
+  '/painel': typeof PortalPainelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cadastro': typeof CadastroRoute
+  '/entrar': typeof EntrarRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
+  '/biblioteca': typeof PortalBibliotecaRoute
+  '/comunicados': typeof PortalComunicadosRoute
+  '/oportunidades': typeof PortalOportunidadesRoute
+  '/painel': typeof PortalPainelRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_portal': typeof PortalRouteWithChildren
+  '/cadastro': typeof CadastroRoute
+  '/entrar': typeof EntrarRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
+  '/_portal/biblioteca': typeof PortalBibliotecaRoute
+  '/_portal/comunicados': typeof PortalComunicadosRoute
+  '/_portal/oportunidades': typeof PortalOportunidadesRoute
+  '/_portal/painel': typeof PortalPainelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/cadastro'
+    | '/entrar'
+    | '/recuperar-senha'
+    | '/biblioteca'
+    | '/comunicados'
+    | '/oportunidades'
+    | '/painel'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/cadastro'
+    | '/entrar'
+    | '/recuperar-senha'
+    | '/biblioteca'
+    | '/comunicados'
+    | '/oportunidades'
+    | '/painel'
+  id:
+    | '__root__'
+    | '/'
+    | '/_portal'
+    | '/cadastro'
+    | '/entrar'
+    | '/recuperar-senha'
+    | '/_portal/biblioteca'
+    | '/_portal/comunicados'
+    | '/_portal/oportunidades'
+    | '/_portal/painel'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PortalRoute: typeof PortalRouteWithChildren
+  CadastroRoute: typeof CadastroRoute
+  EntrarRoute: typeof EntrarRoute
+  RecuperarSenhaRoute: typeof RecuperarSenhaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +147,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_portal': {
+      id: '/_portal'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PortalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro': {
+      id: '/cadastro'
+      path: '/cadastro'
+      fullPath: '/cadastro'
+      preLoaderRoute: typeof CadastroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recuperar-senha': {
+      id: '/recuperar-senha'
+      path: '/recuperar-senha'
+      fullPath: '/recuperar-senha'
+      preLoaderRoute: typeof RecuperarSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_portal/biblioteca': {
+      id: '/_portal/biblioteca'
+      path: '/biblioteca'
+      fullPath: '/biblioteca'
+      preLoaderRoute: typeof PortalBibliotecaRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/comunicados': {
+      id: '/_portal/comunicados'
+      path: '/comunicados'
+      fullPath: '/comunicados'
+      preLoaderRoute: typeof PortalComunicadosRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/oportunidades': {
+      id: '/_portal/oportunidades'
+      path: '/oportunidades'
+      fullPath: '/oportunidades'
+      preLoaderRoute: typeof PortalOportunidadesRouteImport
+      parentRoute: typeof PortalRoute
+    }
+    '/_portal/painel': {
+      id: '/_portal/painel'
+      path: '/painel'
+      fullPath: '/painel'
+      preLoaderRoute: typeof PortalPainelRouteImport
+      parentRoute: typeof PortalRoute
+    }
   }
 }
 
+interface PortalRouteChildren {
+  PortalBibliotecaRoute: typeof PortalBibliotecaRoute
+  PortalComunicadosRoute: typeof PortalComunicadosRoute
+  PortalOportunidadesRoute: typeof PortalOportunidadesRoute
+  PortalPainelRoute: typeof PortalPainelRoute
+}
+
+const PortalRouteChildren: PortalRouteChildren = {
+  PortalBibliotecaRoute: PortalBibliotecaRoute,
+  PortalComunicadosRoute: PortalComunicadosRoute,
+  PortalOportunidadesRoute: PortalOportunidadesRoute,
+  PortalPainelRoute: PortalPainelRoute,
+}
+
+const PortalRouteWithChildren =
+  PortalRoute._addFileChildren(PortalRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PortalRoute: PortalRouteWithChildren,
+  CadastroRoute: CadastroRoute,
+  EntrarRoute: EntrarRoute,
+  RecuperarSenhaRoute: RecuperarSenhaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
