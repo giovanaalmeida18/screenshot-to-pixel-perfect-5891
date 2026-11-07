@@ -1,20 +1,11 @@
-# Roadmap — Finalização Inclus Conecta (Prompt 3)
+# Roadmap — Integração Inclus Conecta
 
-- [ ] Ativar Lovable Cloud (backend)
-- [ ] Migration: tabelas profiles, user_roles, courses, student_courses, materials, announcements, certificates, opportunities + RLS + grants + trigger de perfil
-- [ ] Buckets de Storage (materiais públicos, certificados privados) + políticas
-- [ ] Ativar autenticação por e-mail
-- [ ] Auth real: cadastro, login, recuperação de senha, tela /redefinir-senha, sair
-- [ ] Gate _portal com sessão real (substituir sessão demo)
-- [ ] Trocar queries demo por consultas reais (queries.ts)
-- [ ] Painel do ex-aluno com dados reais
-- [ ] Perfil: visualização e edição
-- [ ] Meus cursos e certificados (download via Storage)
-- [ ] Biblioteca digital (busca, categorias, download)
-- [ ] Comunicados (lista + conteúdo completo)
-- [ ] Oportunidades (filtros)
-- [ ] Painel administrativo: CRUD de alunos, cursos, materiais, comunicados, certificados, oportunidades
-- [ ] Remover dados fictícios e avisos de demonstração
-- [ ] Validar acessibilidade e responsividade
-- [ ] Testes end-to-end (cadastro, login, permissões, CRUD admin)
-- [ ] Resumo final de entrega
+- [x] Ativar Lovable Cloud e autenticação por e-mail
+- [x] Criar tabelas, papéis (user_roles), RLS e trigger de perfil
+- [x] Buckets privados de materiais e certificados + políticas de storage
+- [x] Substituir dados/sessão demo por consultas reais
+- [x] Autenticação real: cadastro, login, recuperar e redefinir senha
+- [x] Portal com dados reais e estados vazios
+- [x] Painel administrativo (CRUD) com verificação de papel
+- [x] Testes ponta a ponta: cadastro, login errado/certo, sessão, bloqueios, CRUD admin, edição de perfil
+- [x] Testes unitários e build OK
