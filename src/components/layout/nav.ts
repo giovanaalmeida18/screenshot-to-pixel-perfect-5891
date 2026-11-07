@@ -23,17 +23,18 @@ export interface NavItem {
     | "/perfil"
     | "/admin";
   label: string;
+  short?: string;
   icon: LucideIcon;
   tone: Tone;
 }
 
 export const mainNav: NavItem[] = [
   { to: "/painel", label: "Início", icon: House, tone: "blue" },
-  { to: "/biblioteca", label: "Biblioteca digital", icon: BookOpen, tone: "blue" },
+  { to: "/biblioteca", label: "Biblioteca digital", short: "Biblioteca", icon: BookOpen, tone: "blue" },
   { to: "/cursos", label: "Meus cursos", icon: GraduationCap, tone: "teal" },
   { to: "/certificados", label: "Certificados", icon: Award, tone: "yellow" },
-  { to: "/comunicados", label: "Comunicados", icon: Megaphone, tone: "orange" },
-  { to: "/oportunidades", label: "Oportunidades", icon: Briefcase, tone: "teal" },
+  { to: "/comunicados", label: "Comunicados", short: "Avisos", icon: Megaphone, tone: "orange" },
+  { to: "/oportunidades", label: "Oportunidades", short: "Vagas e cursos", icon: Briefcase, tone: "teal" },
   { to: "/perfil", label: "Meu perfil", icon: UserRound, tone: "blue" },
 ];
 

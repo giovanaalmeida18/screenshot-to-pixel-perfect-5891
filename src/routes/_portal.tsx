@@ -127,7 +127,7 @@ function PortalLayout() {
                       >
                         <Icon className="h-5 w-5" aria-hidden="true" />
                       </span>
-                      <span className="truncate">{item.label.split(" ")[0]}</span>
+                      <span className="text-center leading-tight">{item.short ?? item.label}</span>
                     </>
                   )}
                 </Link>
