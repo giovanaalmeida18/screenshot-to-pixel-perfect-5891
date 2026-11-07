@@ -1,67 +1,80 @@
-// Tipos de domínio do Inclus Conecta.
-// Mantidos próximos do formato de tabelas para facilitar a futura integração com o banco de dados.
+// Tipos de domínio do Inclus Conecta, mapeados a partir das tabelas do banco de dados.
 
 export type MaterialTipo = "apostila" | "video" | "tutorial";
-
-export interface Categoria {
-  id: string;
-  nome: string;
-  descricao: string;
-}
 
 export interface Material {
   id: string;
   titulo: string;
+  descricao: string | null;
   tipo: MaterialTipo;
-  categoriaId: string;
-  duracao?: string;
-  paginas?: number;
+  categoria: string;
+  filePath: string | null;
+  externalUrl: string | null;
+  publicadoEm: string; // ISO date
 }
 
 export interface Comunicado {
   id: string;
   titulo: string;
   resumo: string;
+  conteudo: string | null;
   categoria: "aviso" | "noticia" | "evento";
   publicadoEm: string; // ISO date
-  destaque?: boolean;
 }
 
-export type OportunidadeTipo = "curso" | "capacitacao" | "evento" | "vaga";
+export type OportunidadeTipo = "curso" | "capacitacao" | "evento" | "vaga" | "oficina";
 
 export interface Oportunidade {
   id: string;
   titulo: string;
+  descricao: string | null;
   tipo: OportunidadeTipo;
-  instituicao: string;
-  modalidade: "presencial" | "online" | "híbrido";
-  prazo: string; // ISO date
-  descricao: string;
+  linkExterno: string | null;
+  prazo: string | null; // ISO date
+}
+
+export interface Certificado {
+  id: string;
+  cursoNome: string;
+  filePath: string | null;
+  emitidoEm: string; // ISO date
 }
 
 export interface CursoRealizado {
-  id: string;
+  id: string; // id do vínculo (student_courses)
+  cursoId: string;
   nome: string;
-  turma: string;
-  cargaHoraria: number;
-  concluidoEm: string; // ISO date
-  certificadoDisponivel: boolean;
-}
-
-export interface Participacao {
-  id: string;
-  titulo: string;
-  data: string; // ISO date
-  tipo: "curso" | "evento" | "oficina";
+  descricao: string | null;
+  cargaHoraria: number | null;
+  status: string;
+  concluidoEm: string | null; // ISO date
+  certificado: Certificado | null;
 }
 
 export interface PerfilExAluno {
   id: string;
   nome: string;
   email: string;
-  telefone: string;
-  cidade: string;
+  telefone: string | null;
+  curso: string | null;
   membroDesde: string; // ISO date
+}
+
+export interface Curso {
+  id: string;
+  nome: string;
+  descricao: string | null;
+  cargaHoraria: number | null;
+}
+
+export interface VinculoCurso {
+  id: string;
+  alunoId: string;
+  alunoNome: string;
+  cursoId: string;
+  cursoNome: string;
+  status: string;
+  concluidoEm: string | null;
 }
 
 export interface ResumoAdmin {
