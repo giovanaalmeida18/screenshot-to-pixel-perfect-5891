@@ -71,10 +71,13 @@ function Cadastro() {
     });
     setEnviando(false);
     if (error) {
+      const msg = error.message.toLowerCase();
       setErroGeral(
-        error.message.toLowerCase().includes("already")
+        msg.includes("already")
           ? "Este e-mail já tem uma conta. Tente entrar ou recuperar a senha."
-          : "Não foi possível criar sua conta agora. Tente novamente em instantes.",
+          : msg.includes("weak") || msg.includes("password")
+            ? "Essa senha é muito comum ou já vazou na internet. Escolha uma senha mais forte, com letras, números e símbolos."
+            : "Não foi possível criar sua conta agora. Tente novamente em instantes.",
       );
       return;
     }
