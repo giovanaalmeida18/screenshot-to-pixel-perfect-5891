@@ -1,20 +1,22 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQueries } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronRight, Megaphone } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { ComunicadoCard } from "@/components/ComunicadoCard";
-import { DemoNotice } from "@/components/DemoNotice";
 import { mainNav } from "@/components/layout/nav";
 import { IconTile } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
-import { comunicadosQuery } from "@/lib/data/queries";
-import { lerSessaoDemo } from "@/lib/demo-session";
+import { comunicadosQuery, perfilQuery } from "@/lib/data/queries";
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/_portal/painel")({
   head: () => pageHead("Meu painel", "Seu painel de ex-aluno: atalhos, novidades e oportunidades do Projeto Inclus."),
-  loader: ({ context }) => context.queryClient.ensureQueryData(comunicadosQuery),
+  loader: ({ context }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(perfilQuery),
+      context.queryClient.ensureQueryData(comunicadosQuery),
+    ]),
   component: Painel,
 });
 
@@ -34,15 +36,16 @@ function saudacaoDoDia() {
 }
 
 function Painel() {
-  const { data: comunicados } = useSuspenseQuery(comunicadosQuery);
-  const [nome, setNome] = useState<string | null>(null);
+  const [{ data: perfil }, { data: comunicados }] = useSuspenseQueries({
+    queries: [perfilQuery, comunicadosQuery],
+  });
   const [saudacao, setSaudacao] = useState("Olá");
 
   useEffect(() => {
-    setNome(lerSessaoDemo()?.primeiroNome || null);
     setSaudacao(saudacaoDoDia());
   }, []);
 
+  const primeiroNome = perfil.nome.trim().split(/\s+/)[0] ?? "";
   const atalhos = mainNav.filter((i) => i.to in descricoes);
 
   return (
@@ -51,9 +54,7 @@ function Painel() {
         <div aria-hidden="true" className="absolute -right-6 -top-10 h-36 w-36 rounded-full bg-brand-yellow sm:h-48 sm:w-48" />
         <div aria-hidden="true" className="absolute bottom-4 right-24 hidden h-14 w-14 rotate-12 rounded-2xl bg-brand-orange sm:block" />
         <p className="relative text-base font-medium text-primary-foreground/85">{saudacao},</p>
-        <h1 className="relative mt-1 text-3xl font-extrabold sm:text-4xl">
-          {nome ? `${nome}!` : "ex-aluno(a)!"}
-        </h1>
+        <h1 className="relative mt-1 text-3xl font-extrabold sm:text-4xl">{primeiroNome}!</h1>
         <p className="relative mt-3 max-w-lg text-lg text-primary-foreground/90">
           Que bom ter você por aqui. O que você quer fazer hoje?
         </p>
@@ -94,12 +95,21 @@ function Painel() {
             Ver todas <ChevronRight className="h-5 w-5" aria-hidden="true" />
           </Link>
         </div>
-        <div className="mt-4 grid gap-4 md:grid-cols-3">
-          {comunicados.slice(0, 3).map((c) => (
-            <ComunicadoCard key={c.id} item={c} />
-          ))}
-        </div>
-        <DemoNotice className="mt-4" />
+        {comunicados.length > 0 ? (
+          <div className="mt-4 grid gap-4 md:grid-cols-3">
+            {comunicados.slice(0, 3).map((c) => (
+              <ComunicadoCard key={c.id} item={c} />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-4 flex flex-col items-center rounded-3xl border-2 border-dashed bg-card p-10 text-center">
+            <Megaphone className="h-10 w-10 text-primary" aria-hidden="true" />
+            <p className="mt-3 text-lg font-bold text-foreground">Nenhum comunicado publicado ainda</p>
+            <p className="mt-1 max-w-md text-base text-muted-foreground">
+              Quando a equipe do Projeto Inclus publicar avisos e notícias, eles aparecerão aqui.
+            </p>
+          </div>
+        )}
       </section>
     </div>
   );
