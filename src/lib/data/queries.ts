@@ -37,7 +37,7 @@ export const sessionQuery = queryOptions({
 export const perfilQuery = queryOptions({
   queryKey: ["perfil"],
   queryFn: async (): Promise<PerfilExAluno> => {
-    const row = await must(supabase.from("profiles").select("*").single());
+    const { data: row } = await supabase.from("profiles").select("*").maybeSingle();
     if (!row) throw new Error("Perfil não encontrado.");
     return {
       id: row.id,
